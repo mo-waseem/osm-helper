@@ -1,0 +1,12 @@
+OSRM_CONFIG:
+  API: test
+  GLOBAL_SCALE_FACTOR: 1
+
+DATABASE:
+  USERNAME: xiaoxu
+  PASSWORD: xiaoxu
+  HOST: 127.0.0.1
+  PORT: 5432
+  DB:
+    1: 2
+    2: 3
