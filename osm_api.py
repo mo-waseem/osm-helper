@@ -1,12 +1,12 @@
 import requests
+from config import Config
 
-from config import OSRM_URL
 
 osm_session = requests.Session()
 
 
 def osrm_matrix(locations, srcs, dests):
-    osrm_url = OSRM_URL
+    osrm_url = Config.config("OSRM_URL")
     points = ''
     for idx, i in enumerate(locations):
         if idx != len(locations) - 1:
@@ -17,8 +17,9 @@ def osrm_matrix(locations, srcs, dests):
     params = {
         "sources": ";".join([str(i) for i in srcs]),
         "destinations": ";".join([str(i) for i in dests]),
-        "annotations": "distance,duration"
+         "annotations": "distance,duration" # those must be configurable
     }
+
     headers = {'Content-Type': 'text/xml; charset=utf-8'}
     try:
         response = osm_session.get(osrm_url, params=params, headers=headers)  # 'Retry-After': '3600'})
