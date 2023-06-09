@@ -3,7 +3,13 @@ from config import Config
 
 
 osm_session = requests.Session()
+"""
+    TODO:
+        1- Handle large number of locations.
+        2- Handle osm session and read more about sessions in general.
 
+        
+"""
 
 def osrm_matrix(locations, srcs, dests):
     osrm_url = Config.config("OSRM_URL")
@@ -14,10 +20,26 @@ def osrm_matrix(locations, srcs, dests):
         else:
             points += str(i[1]) + "," + str(i[0])
     osrm_url += points
+
+    # Initialize params
+    annotations = ""
+    osm_config = Config.config("OSM_CONFIG")
+    
+    if osm_config.get("WITH_TIME", True):
+        annotations += "duration"
+    if osm_config.get("WITH_DISTANCE", False):
+        annotations = annotations + "," + "distance" if annotations else "distance"
+    
+    skip_waypoints = osm_config.get("SKIP_WAYPOINTS", True)
+    
+    scale_factor = osm_config.get("TIME_SCALE_FACTOR", 1)
+    
     params = {
         "sources": ";".join([str(i) for i in srcs]),
         "destinations": ";".join([str(i) for i in dests]),
-         "annotations": "distance,duration" # those must be configurable
+        "annotations": annotations,
+        "skip_waypoints": skip_waypoints,
+        "scale_factor": scale_factor
     }
 
     headers = {'Content-Type': 'text/xml; charset=utf-8'}
@@ -25,6 +47,9 @@ def osrm_matrix(locations, srcs, dests):
         response = osm_session.get(osrm_url, params=params, headers=headers)  # 'Retry-After': '3600'})
 
         data = response.json()
-        return data['distances'], data['durations']
+
+        keys = annotations.split(',')
+
+        return [data[key+"s"] for key in keys]
     except Exception as e:
-        raise Exception("Error")
+        raise Exception(e)
