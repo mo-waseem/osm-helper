@@ -3,3 +3,7 @@ OSRM_CONFIG:
   WITH_DISTANCE: false
   TIME_SCALE_FACTOR: 1
   SKIP_WAYPOINTS: true
+
+OSRM_URLS:
+  http://router.project-osrm.org/table/v1/driving/
+  http://localhost:8001/table/v1/driving/

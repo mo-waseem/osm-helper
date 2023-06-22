@@ -1,3 +1,5 @@
+import random
+
 from math import sin, radians, cos, asin, sqrt
 from config import Config
 
@@ -23,3 +25,13 @@ def haversine_distance(
     c = 2 * asin(sqrt(a))
     # approximate radius of the Earth: 6371 km
     return c * 6371
+
+
+def generate_random_locations(location, number=10, ratio=50):
+    return [
+        (
+            location[0] + (random.random() / ratio),
+            location[1] + (random.random() / ratio),
+        )
+        for _ in range(number)
+    ]
