@@ -1,13 +1,14 @@
 import random
 
 from math import sin, radians, cos, asin, sqrt
-from config import Config
+from utils.type_hints import Location, LocationArray
 
 
-# this is the direct distance between two points on earth respecting the circularity of earth
+# this is the direct distance between two points 
+# on earth respecting the circularity of earth
 def haversine_distance(
-    location_a, location_b
-):  # (source_lat, source_lng), (destination_lat, destination_lng)
+    location_a: Location, location_b: Location
+) -> float:  # (source_lat, source_lng), (destination_lat, destination_lng)
     def hav(angle):
         return sin(angle / 2) ** 2
 
@@ -27,7 +28,9 @@ def haversine_distance(
     return c * 6371
 
 
-def generate_random_locations(location, number=10, ratio=50):
+def generate_random_locations(
+    location: Location, number: int = 10, ratio: float = 50
+) -> LocationArray:
     return [
         (
             location[0] + (random.random() / ratio),

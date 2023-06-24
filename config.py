@@ -15,7 +15,6 @@ class Config:
             pass
    
     __conf = {
-        "OSRM_URL": os.getenv("OSM_HELPER_OSRM_URL", "http://router.project-osrm.org/table/v1/driving/"),
         "OSM_CONFIG": OSM_CONFIG,
     }
     __setters = ["OSRM_URL"]
