@@ -5,11 +5,14 @@ import traceback
 from requests.exceptions import ConnectionError
 from config import Config
 from utils.type_hints import LocationArray
+from helpers.redis import Redis
+from utils import get_hashed_str
 
 """
 TODO:
     1- Caching.
-    2- Fault tolerance at the level of OSM instances (so keep trying another instances till you reach a result)
+    2- Fault tolerance at the level of OSM instances (so keep trying another instances 
+    till you reach a result)
 """
 
 
@@ -25,6 +28,7 @@ class OSM:
         api_url=None,
         osm_instances_urls=None,
         load_balance=False,
+        cache_results=False,
     ) -> None:
         self.version = version
         self.profile = profile
@@ -36,6 +40,7 @@ class OSM:
         self.osm_instances_urls = self.__get_osm_instances_urls(osm_instances_urls)
         self.load_balance = load_balance
         self.osm_session = requests.Session()
+        self.cache_results = cache_results
 
     def osm_table_service_url(self, url: str) -> str:
         params = f"table/{self.version}/{self.profile}/"
@@ -81,8 +86,16 @@ class OSM:
         return osm_url
 
     def osm_matrix(
-        self, locations: LocationArray, srcs: list[int], dests: list[int]
+        self,
+        locations: LocationArray,
+        srcs: list[int],
+        dests: list[int],
+        request_id: str = None,
     ) -> dict:
+        if self.cache_results and not request_id:
+            raise Exception(
+                "When activate 'cache_results' you need to pass 'request_id' to osm_matrix()"
+            )
         osm_url = self.__get_current_osm_url()
 
         points = ""
@@ -115,11 +128,33 @@ class OSM:
         headers = {"Content-Type": "text/xml; charset=utf-8"}
 
         try:
+            if self.cache_results:
+                redis_key = (
+                    get_hashed_str(
+                        params["sources"]
+                        + params["destinations"]
+                        + params["annotations"]
+                        + params["skip_waypoints"]
+                        + str(params["scale_factor"])
+                    )
+                    + f"_{request_id}"
+                )
+                data = Redis.get(redis_key)
+                if data:
+                    print("redis used")
+                    return data
+
             response = self.osm_session.get(osm_url, params=params, headers=headers)
             data = response.json()
 
             keys = annotations.split(",")
+            data = {key: data[key + "s"] for key in keys}
+            if self.cache_results:
+                expire_in = Config.config("OSM_CONFIG")["REDIS_EXPIRATION_TIME"]
+                Redis.cache(
+                    redis_key, data, expire_in=expire_in
+                )  # need to be in thread for performance reason
+            return data
 
-            return {key: data[key + "s"] for key in keys}
         except ConnectionError:  # This osm instance is not working
             traceback.print_exc()

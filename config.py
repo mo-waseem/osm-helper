@@ -7,10 +7,12 @@ load_dotenv()
 
 class Config:
     # You need to add this file to .gitignore of your project
-    with open(os.getenv("CONFG_YAML_FILE_NAME", "osm_helper_config.yaml"), "r") as stream:
+    with open(
+        os.getenv("CONFG_YAML_FILE_NAME", "osm_helper_config.yaml"), "r"
+    ) as stream:
         try:
             OSM_CONFIG = yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
+        except yaml.YAMLError as exc: # noqa
             OSM_CONFIG = {}
             pass
 
