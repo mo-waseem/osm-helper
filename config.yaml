@@ -1,6 +1,0 @@
-PRIMARY_OSRM_URL:
-  http://localhost:8001
-
-OSRM_URLS:
-  http://router.project-osrm.org
-  http://localhost:8001

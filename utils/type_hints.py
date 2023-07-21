@@ -1,4 +1,4 @@
-Location = tuple[float, float]
+Location = tuple[str, str]
 
 LocationArray = list[Location]
 

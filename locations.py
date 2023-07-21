@@ -31,10 +31,20 @@ def haversine_distance(
 def generate_random_locations(
     location: Location, number: int = 10, ratio: float = 50
 ) -> LocationArray:
+    """
+    Generate random locations:
+        Parameters:
+            - location: A tuple of str, it's a base location.
+            - number: The number of needed random locations.
+            - ratio: This decide how much the locations are far or close from 
+            each others, higher ratio --> locations are closer.
+        Returns:
+            - locations: List of locations. 
+    """
     return [
         (
-            location[0] + (random.random() / ratio),
-            location[1] + (random.random() / ratio),
+            str(float(location[0]) + (random.random() / ratio)),
+            str(float(location[1]) + (random.random() / ratio)),
         )
         for _ in range(number)
     ]

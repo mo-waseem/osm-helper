@@ -1,14 +1,15 @@
 import requests
 import random
+import traceback
+
+from requests.exceptions import ConnectionError
 from config import Config
 from utils.type_hints import LocationArray
 
 """
-    TODO:
-        1- Handle large number of locations.
-        2- Handle osm session and read more about sessions in general.
-
-        
+TODO:
+    1- Caching.
+    2- Fault tolerance at the level of OSM instances (so keep trying another instances till you reach a result)
 """
 
 
@@ -32,11 +33,11 @@ class OSM:
         self.skip_waypoints = skip_waypoints
         self.time_scale_factor = time_scale_factor
         self.api_url = self._get_api_url(api_url)
-        self.osm_instances_urls = self._get_osm_instances_urls(osm_instances_urls)
+        self.osm_instances_urls = self.__get_osm_instances_urls(osm_instances_urls)
         self.load_balance = load_balance
         self.osm_session = requests.Session()
 
-    def set_url_params(self, url):
+    def osm_table_service_url(self, url: str) -> str:
         params = f"table/{self.version}/{self.profile}/"
         full_url = url if url[-1] == "/" else url + "/"
         return full_url + params
@@ -45,12 +46,13 @@ class OSM:
         if value:
             if not isinstance(value, str):
                 raise Exception("'api_url' should be an str")
+
             api_url = value
         else:
-            api_url = Config.config("OSM_CONFIG")["PRIMARY_OSRM_URL"]
-        return self.set_url_params(api_url)
+            api_url = Config.config("OSRM_URL")
+        return self.osm_table_service_url(api_url)
 
-    def _get_osm_instances_urls(self, value: list[str]) -> list[str]:
+    def __get_osm_instances_urls(self, value: list[str]) -> list[str]:
         if value:
             if not isinstance(value, list):
                 raise Exception(
@@ -67,24 +69,29 @@ class OSM:
                 else []
             )
 
-        return [self.set_url_params(url) for url in urls]
+        return [self.osm_table_service_url(url) for url in urls]
 
-    def osrm_matrix(
-        self, locations: LocationArray, srcs: list[int], dests: list[int]
-    ) -> dict:
+    def __get_current_osm_url(self) -> str:
         if self.load_balance and self.osm_instances_urls:
-            osrm_url = self.osm_instances_urls[
+            osm_url = self.osm_instances_urls[
                 random.randint(0, len(self.osm_instances_urls) - 1)
             ]
         else:
-            osrm_url = self.api_url
+            osm_url = self.api_url
+        return osm_url
+
+    def osm_matrix(
+        self, locations: LocationArray, srcs: list[int], dests: list[int]
+    ) -> dict:
+        osm_url = self.__get_current_osm_url()
+
         points = ""
-        for idx, i in enumerate(locations):
+        for idx, loc in enumerate(locations):
             if idx != len(locations) - 1:
-                points += str(i[1]) + "," + str(i[0]) + ";"
+                points += loc[1] + "," + loc[0] + ";"
             else:
-                points += str(i[1]) + "," + str(i[0])
-        osrm_url += points
+                points += loc[1] + "," + loc[0]
+        osm_url += points
 
         # Initialize params
         annotations = ""
@@ -108,11 +115,11 @@ class OSM:
         headers = {"Content-Type": "text/xml; charset=utf-8"}
 
         try:
-            response = self.osm_session.get(osrm_url, params=params, headers=headers)
+            response = self.osm_session.get(osm_url, params=params, headers=headers)
             data = response.json()
 
             keys = annotations.split(",")
 
             return {key: data[key + "s"] for key in keys}
-        except Exception as e:
-            raise Exception(e)
+        except ConnectionError:  # This osm instance is not working
+            traceback.print_exc()
