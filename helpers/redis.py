@@ -89,6 +89,12 @@ class Redis(metaclass=Singleton):
     @with_redis_instance
     def deleteall():
         return Redis.redis_instance.flushall()
+    
+    @staticmethod
+    @with_redis_instance
+    def delete_current_db():
+        return Redis.redis_instance.flushdb()
+    
 
     @staticmethod
     @with_redis_instance
