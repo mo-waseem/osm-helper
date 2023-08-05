@@ -1,18 +1,11 @@
 import requests
 import random
-import traceback
 
 from requests.exceptions import ConnectionError
 from config import Config
 from utils.type_hints import LocationArray
 from helpers.redis import Redis
 from utils import get_hashed_str
-
-"""
-TODO:
-    1- Fault tolerance at the level of OSM instances (so keep trying another instances 
-    till you reach a result)
-"""
 
 
 class OSM:
@@ -28,6 +21,7 @@ class OSM:
         osm_instances_urls=None,
         load_balance=False,
         cache_results=False,
+        max_api_retries=10,
     ) -> None:
         self.version = version
         self.profile = profile
@@ -40,6 +34,7 @@ class OSM:
         self.load_balance = load_balance
         self.osm_session = requests.Session()
         self.cache_results = cache_results
+        self.max_api_retries = self.__get_max_api_retries(max_api_retries)
 
     def osm_table_service_url(self, url: str) -> str:
         params = f"table/{self.version}/{self.profile}/"
@@ -56,6 +51,10 @@ class OSM:
             api_url = Config.config("OSRM_URL")
         return self.osm_table_service_url(api_url)
 
+    def __get_max_api_retries(self, max_api_retires):
+        config_retries = Config.config("OSRM_MAX_API_RETRIES")
+        return config_retries if config_retries else max_api_retires
+    
     def __get_osm_instances_urls(self, value: list[str]) -> list[str]:
         if value:
             if not isinstance(value, list):
@@ -120,36 +119,57 @@ class OSM:
 
         headers = {"Content-Type": "text/xml; charset=utf-8"}
 
-        try:
-            if self.cache_results:
-                redis_key = (
-                    get_hashed_str(
-                        "".join([str(loc) for loc in locations])
-                        + params["sources"]
-                        + params["destinations"]
-                        + params["annotations"]
-                        + params["skip_waypoints"]
-                        + str(params["scale_factor"])
-                    )
-                    + f"_{request_id}"
+        if self.cache_results:
+            redis_key = (
+                get_hashed_str(
+                    "".join([str(loc) for loc in locations])
+                    + params["sources"]
+                    + params["destinations"]
+                    + params["annotations"]
+                    + params["skip_waypoints"]
+                    + str(params["scale_factor"])
                 )
-                data = Redis.get(redis_key)
-                if data:
-                    print("redis used")
-                    return data
+                + f"_{request_id}"
+            )
+            data = Redis.get(redis_key)
+            if data:
+                return data
 
-            response = self.osm_session.get(osm_url, params=params, headers=headers)
-            data = response.json()
-
-            keys = annotations.split(",")
-            data = {key: data[key + "s"] for key in keys}
-            if self.cache_results:
-                expire_in = Config.config("REDIS_EXPIRATION_TIME")
-                if Config.config("REDIS_ASYNC_CACHE"):
-                    Redis.acache(redis_key, data, expire_in=expire_in)
-                else:
-                    Redis.cache(redis_key, data, expire_in=expire_in)
-            return data
-
-        except ConnectionError:  # This osm instance is not working
-            traceback.print_exc()
+        retries, try_another_osm, osm_urls_number, osm_url_index, success_request = (
+            0,
+            True,
+            len(self.osm_instances_urls) if self.osm_instances_urls else 1,
+            0,
+            False,
+        )
+        while (
+            (retries < self.max_api_retries or try_another_osm) and not success_request
+        ):
+            try:
+                response = self.osm_session.get(osm_url, params=params, headers=headers)
+                success_request = True
+            except ConnectionError:
+                if osm_url_index < osm_urls_number:
+                    osm_url = (
+                        self.osm_instances_urls[osm_url_index]
+                        if self.osm_instances_urls
+                        else self.__get_current_osm_url()
+                    ) + points
+                    osm_url_index += 1
+                    if osm_url_index == osm_urls_number:
+                        try_another_osm = False
+                retries += 1
+        
+        if not success_request:
+            raise Exception("All of the provided OSRM urls are not working.")
+        
+        data = response.json()
+        keys = annotations.split(",")
+        data = {key: data[key + "s"] for key in keys}
+        if self.cache_results:
+            expire_in = Config.config("REDIS_EXPIRATION_TIME")
+            if Config.config("REDIS_ASYNC_CACHE"):
+                Redis.acache(redis_key, data, expire_in=expire_in)
+            else:
+                Redis.cache(redis_key, data, expire_in=expire_in)
+        return data
