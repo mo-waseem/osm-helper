@@ -86,7 +86,7 @@ class OSM:
     ) -> dict:
         if self.cache_results and not request_id:
             raise Exception(
-                "When activate 'cache_results' you need to pass 'request_id' to osm_matrix()"
+                "When activate 'cache_results' you need to pass 'request_id' to osm_matrix()" # noqa
             )
         osm_url = self.__get_current_osm_url()
 
@@ -134,7 +134,7 @@ class OSM:
             data = Redis.get(redis_key)
             if data:
                 return data
-
+            
         retries, try_another_osm, osm_urls_number, osm_url_index, success_request = (
             0,
             True,
@@ -142,6 +142,7 @@ class OSM:
             0,
             False,
         )
+        
         while (
             (retries < self.max_api_retries or try_another_osm) and not success_request
         ):
@@ -159,7 +160,7 @@ class OSM:
                     if osm_url_index == osm_urls_number:
                         try_another_osm = False
                 retries += 1
-        
+
         if not success_request:
             raise Exception("All of the provided OSRM urls are not working.")
         
