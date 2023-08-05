@@ -10,8 +10,7 @@ from utils import get_hashed_str
 
 """
 TODO:
-    1- Caching.
-    2- Fault tolerance at the level of OSM instances (so keep trying another instances 
+    1- Fault tolerance at the level of OSM instances (so keep trying another instances 
     till you reach a result)
 """
 
@@ -65,14 +64,8 @@ class OSM:
                 )
             urls = value
         else:
-            OSM_CONFIG = Config.config("OSM_CONFIG")
-            urls = (
-                OSM_CONFIG["OSRM_URLS"]
-                if OSM_CONFIG
-                and "OSRM_URLS" in OSM_CONFIG
-                and isinstance(OSM_CONFIG["OSRM_URLS"], list)
-                else []
-            )
+            OSRM_URLS = Config.config("OSRM_URLS")
+            urls = OSRM_URLS if isinstance(OSRM_URLS, list) else []
 
         return [self.osm_table_service_url(url) for url in urls]
 
@@ -150,10 +143,11 @@ class OSM:
             keys = annotations.split(",")
             data = {key: data[key + "s"] for key in keys}
             if self.cache_results:
-                expire_in = Config.config("OSM_CONFIG")["REDIS_EXPIRATION_TIME"]
-                Redis.cache(
-                    redis_key, data, expire_in=expire_in
-                )  # need to be in thread for performance reason
+                expire_in = Config.config("REDIS_EXPIRATION_TIME")
+                if Config.config("REDIS_ASYNC_CACHE"):
+                    Redis.acache(redis_key, data, expire_in=expire_in)
+                else:
+                    Redis.cache(redis_key, data, expire_in=expire_in)
             return data
 
         except ConnectionError:  # This osm instance is not working

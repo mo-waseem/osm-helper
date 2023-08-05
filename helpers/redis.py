@@ -4,7 +4,7 @@ import pickle as pk
 import redis
 
 sys.path.append("..")
-from config import Config # noqa
+from config import Config  # noqa
 
 lock = threading.Lock()
 
@@ -37,14 +37,13 @@ class Redis(metaclass=Singleton):
 
     @staticmethod
     def get_instance():
-        OSM_CONFIG = Config.config("OSM_CONFIG")
         if Redis.redis_instance is None:
             rd = redis.StrictRedis(
-                host=OSM_CONFIG["REDIS_HOST"],
-                port=OSM_CONFIG["REDIS_PORT"],
+                host=Config.config("REDIS_HOST"),
+                port=Config.config("REDIS_PORT"),
                 db=0,
-                password=OSM_CONFIG["REDIS_PASSWORD"]
-                if "REDIS_PASSWORD" in OSM_CONFIG and OSM_CONFIG["REDIS_PASSWORD"]
+                password=Config.config("REDIS_PASSWORD")
+                if Config.config("REDIS_PASSWORD")
                 else "",
             )
             Redis(rd)
@@ -53,7 +52,7 @@ class Redis(metaclass=Singleton):
     def __init__(self, redis_instance):
         Redis.redis_instance = redis_instance
         Redis._instance = self
-        print("REDIS INITIALIZED")
+        print("Redis Initialized Successfully.")
 
     @staticmethod
     @with_redis_instance
@@ -63,6 +62,24 @@ class Redis(metaclass=Singleton):
         if expire_in:
             Redis.redis_instance.expire(key, expire_in)
         return result
+
+    @staticmethod
+    @with_redis_instance
+    def acache(key, value, expire_in=None):
+        cache_thread = threading.Thread(
+            target=Redis.cache,
+            args=(
+                key,
+                value,
+            ),
+            kwargs={"expire_in": expire_in},
+        )
+        cache_thread.start()
+
+    @staticmethod
+    @with_redis_instance
+    def expire_in(key, seconds):
+        Redis.redis_instance.expire(key, seconds)
 
     @staticmethod
     @with_redis_instance
@@ -89,12 +106,11 @@ class Redis(metaclass=Singleton):
     @with_redis_instance
     def deleteall():
         return Redis.redis_instance.flushall()
-    
+
     @staticmethod
     @with_redis_instance
     def delete_current_db():
         return Redis.redis_instance.flushdb()
-    
 
     @staticmethod
     @with_redis_instance

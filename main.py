@@ -8,16 +8,16 @@ from osm_api import OSM
 
 def test():
     #0.014866113662719727
-    # locations = generate_random_locations(
-    #     ("30.222676136092296", "31.455316886214952"), number=10
-    # )
-    locations = []
-    with open("locations.csv", "r") as f:
-        csvreader = csv.reader(f)
-        for i, row in enumerate(csvreader):
-            if i == 0:
-                continue
-            locations.append(row)
+    locations = generate_random_locations(
+        ("30.222676136092296", "31.455316886214952"), number=10
+    )
+    # locations = []
+    # with open("locations.csv", "r") as f:
+    #     csvreader = csv.reader(f)
+    #     for i, row in enumerate(csvreader):
+    #         if i == 0:
+    #             continue
+    #         locations.append(row)
     
     # # with open("locations.csv", 'w') as f:
     # #     writer = csv.writer(f)
