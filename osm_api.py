@@ -124,7 +124,8 @@ class OSM:
             if self.cache_results:
                 redis_key = (
                     get_hashed_str(
-                        params["sources"]
+                        "".join([str(loc) for loc in locations])
+                        + params["sources"]
                         + params["destinations"]
                         + params["annotations"]
                         + params["skip_waypoints"]
