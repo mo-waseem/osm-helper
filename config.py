@@ -1,4 +1,5 @@
 import os
+from typing import Any
 import yaml
 from dotenv import load_dotenv
 
@@ -31,11 +32,11 @@ class Config:
     __setters = ["OSRM_URL"]
 
     @staticmethod
-    def config(name, default_value=None):
+    def config(name: str, default_value: Any=None) -> Any:
         return Config.__conf.get(name, default_value)
 
     @classmethod
-    def set(cls, name, value):
+    def set(cls, name: str, value: Any) -> None:
         if not isinstance(name, str):
             raise TypeError(f"{name} must be str not but {type(name)} is given.")
 

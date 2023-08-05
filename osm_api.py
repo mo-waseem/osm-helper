@@ -4,24 +4,24 @@ import random
 from requests.exceptions import ConnectionError
 from config import Config
 from utils.type_hints import LocationArray
-from helpers.redis import Redis
+from utils.redis import Redis
 from utils import get_hashed_str
 
 
 class OSM:
     def __init__(
         self,
-        version="v1",
-        profile="driving",
-        with_time=True,
-        with_distance=False,
-        skip_waypoints=True,
-        time_scale_factor=1,
-        api_url=None,
-        osm_instances_urls=None,
-        load_balance=False,
-        cache_results=False,
-        max_api_retries=10,
+        version: str="v1",
+        profile: str="driving",
+        with_time: bool=True,
+        with_distance: bool=False,
+        skip_waypoints: bool=True,
+        time_scale_factor: int=1,
+        api_url: str=None,
+        osm_instances_urls: list=None,
+        load_balance: bool=False,
+        cache_results: bool=False,
+        max_api_retries: int=10,
     ) -> None:
         self.version = version
         self.profile = profile
