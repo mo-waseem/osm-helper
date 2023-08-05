@@ -28,8 +28,8 @@ def default_parameters_example():
 def with_cache_and_load_balance_example():
     st_time = time.time()
     
-    # Create a pretty simple OSM instance
-    osm_api = OSM(load_balance=True, cache_results=True)
+    # Create an OSM instance
+    osm_api = OSM(load_balance=True, cache_results=True, with_distance=True)
 
     # Get the times
     result = osm_api.osm_matrix(
