@@ -29,7 +29,7 @@ class OSM:
         self.with_distance = with_distance
         self.skip_waypoints = skip_waypoints
         self.time_scale_factor = time_scale_factor
-        self.api_url = self._get_api_url(api_url)
+        self.api_url = self.__get_api_url(api_url)
         self.osm_instances_urls = self.__get_osm_instances_urls(osm_instances_urls)
         self.load_balance = load_balance
         self.osm_session = requests.Session()
@@ -41,7 +41,7 @@ class OSM:
         full_url = url if url[-1] == "/" else url + "/"
         return full_url + params
 
-    def _get_api_url(self, value: str) -> str:
+    def __get_api_url(self, value: str) -> str:
         if value:
             if not isinstance(value, str):
                 raise Exception("'api_url' should be an str")
