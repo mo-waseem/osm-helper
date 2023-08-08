@@ -88,25 +88,25 @@ The configuration of this package is done by an .env file and .yaml file like th
 YAML_CONFIG_FILE_NAME=YOUR_OSM_HELPER_CONFIG.yaml
 ```
 ### YOUR_OSM_HELPER_CONFIG.yaml
-```
+```yaml
 PRIMARY_OSRM_URL:
-	http://router.project-osrm.org
+http://router.project-osrm.org
 
 OSRM_URLS: # this in case of multiple osrm instances
-	- http://router.project-osrm.org
-	- http://localhost:8001 # May be a docker instance
+- http://router.project-osrm.org
+- http://localhost:8001 # May be a docker instance
 
 REDIS_HOST:
-	127.0.0.1
+127.0.0.1
 REDIS_PORT:
-	6379
+6379
 REDIS_EXPIRATION_TIME:
-	43200 # in seconds
+43200 # in seconds
 REDIS_ASYNC_CACHE: # If True, the caching process will be done in async way
-	True
+True
 ```
 
 ## Contribution
 
-You're welcome!
+**You're welcome!**  
 Fork the project and make a pull request I will see it inshallah.
