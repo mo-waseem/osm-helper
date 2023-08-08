@@ -7,7 +7,7 @@ This simple package is your right way! :rocket::rocket:
 
 The package built on top of  [`OSRM` (Open Source Routing Machine) project](https://project-osrm.org/). :world_map:
 
-# Features
+## Features
 
 1- **A default parameters** (that make the performance better) are initialized and they are configurable.
 
