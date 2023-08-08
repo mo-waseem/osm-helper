@@ -19,7 +19,7 @@ The package built on top of  [`OSRM` (Open Source Routing Machine) project](http
 
 ## Examples
 ### Simple Example
-```
+```python
 import time
 
 from locations import generate_random_locations
@@ -56,7 +56,7 @@ By running the code, you will get tow things:
 2- `result`: Time matrix.
 
  ### Caching and Load balancing Example
- ```
+```python
  def  with_cache_and_load_balance_example():
 		start_time = time.time()
 	
