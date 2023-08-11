@@ -1,6 +1,6 @@
 import time
-from .locations import generate_random_locations
-from .osm_api import OSM
+from ..locations import generate_random_locations
+from ..osm_api import OSM
 
 # Generate 10 random locations
 locations = generate_random_locations(
