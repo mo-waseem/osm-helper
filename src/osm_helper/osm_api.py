@@ -131,7 +131,7 @@ class OSM:
                 )
                 + f"_{request_id}"
             )
-            data = Redis.get(redis_key)
+            data = Redis().get(redis_key)
             if data:
                 return data
             
@@ -170,7 +170,7 @@ class OSM:
         if self.cache_results:
             expire_in = Config.config("REDIS_EXPIRATION_TIME")
             if Config.config("REDIS_ASYNC_CACHE"):
-                Redis.acache(redis_key, data, expire_in=expire_in)
+                Redis().acache(redis_key, data, expire_in=expire_in)
             else:
-                Redis.cache(redis_key, data, expire_in=expire_in)
+                Redis().cache(redis_key, data, expire_in=expire_in)
         return data
