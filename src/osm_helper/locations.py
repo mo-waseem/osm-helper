@@ -1,7 +1,7 @@
 import random
 
 from math import sin, radians, cos, asin, sqrt
-from utils.type_hints import Location, LocationArray
+from .utils.type_hints import Location, LocationArray
 
 
 # this is the direct distance between two points 

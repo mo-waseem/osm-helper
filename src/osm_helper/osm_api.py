@@ -2,10 +2,10 @@ import requests
 import random
 
 from requests.exceptions import ConnectionError
-from config import Config
-from utils.type_hints import LocationArray
-from utils.redis import Redis
-from utils import get_hashed_str
+from .config import Config
+from .utils.type_hints import LocationArray
+from .utils.redis import Redis
+from .utils import get_hashed_str
 
 
 class OSM:

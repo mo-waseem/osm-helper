@@ -1,10 +1,9 @@
-import sys
 import threading
 import pickle as pk
 import redis
 
-sys.path.append("..")
-from config import Config  # noqa
+
+from ..config import Config  # noqa
 
 lock = threading.Lock()
 
