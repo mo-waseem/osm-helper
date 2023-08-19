@@ -96,11 +96,20 @@ result = osm_api.osm_matrix(
 			request_id="123"
 		)
 
-elapsed_time = time.time() - start_time
-
-print("Cache and Load balance enabled example elapsed time:", elapsed_time)
 print(result)
 ```
+ ## OSM Class parameters
+ | Name | Default | Explaination |
+ |------|---------|--------------|
+ |with_time|bool: True|-|
+ |with_distance|bool: False|If True, you will get a distance matrix in addition to the time matrix in the result|
+ |skip_waypoints|bool: True|This will skip waypoints from the response of osrm api, so you will see a performance enhancement by this|
+ |time_scale_factor|int: 1|Scale the resulted times by this scalar|
+ |api_url|str: Comes from `PRIMARY_OSRM_URL` config. value|This is the api url of the osrm instance|
+ |osm_instances_urls|list: Comes from `OSRM_URLS` config. value|This is a list of osrm urls|
+ |load_balance|bool: False|If True, to be not useless we need to set `osm_instances_urls`, so the package will request from a random instance|
+ |cache_results|bool: False|If True, you need to pass `request_id` to the `osm_api.osm_matrix` so the key in the redis will be a mix between the info of the function parameters and this `request_id`|
+ |max_api_retries|int: 10|If the instance is down, so we will try this number of times before return the result|  
  
 ## Configuration
 
@@ -111,25 +120,16 @@ The configuration of this package is done by an .env file and .yaml file like th
 YAML_CONFIG_FILE_NAME=YOUR_OSM_HELPER_CONFIG.yaml
 ```
 ### YOUR_OSM_HELPER_CONFIG.yaml
-```yaml
-PRIMARY_OSRM_URL: # Mandatory
-http://router.project-osrm.org
+| Name                 | Default   | Explaination |
+| -------------------- | ------- |-------  |
+| PRIMARY_OSRM_URL     | http://router.project-osrm.org         | OSRM url, the default value is the public instance of OSRM.         |       
+| [Optional] OSRM_URLS               |  None       | OSRM Instances         |
+| [Optional] OSRM_MAX_API_RETRIES | 10 | If the instance is down, so we will try `OSRM_MAX_API_RETRIES` times before return the result |
+| [Optional] REDIS_HOST                     | None        | Redis host url         |
+| [Optional] REDIS_PORT                    | None        | Redis port        |
+| [Optional] REDIS_EXPIRATION_TIME                    |  INFINITY       | Redis records timeout (in seconds)         |
+| [Optional] REDIS_ASYNC_CACHE                   | False        | If True, the caching process will be done in async way (To maximize the performance of getting ETA)          |
 
-OSRM_URLS: # OPtional, this in case of multiple osrm instances
-- http://router.project-osrm.org
-- http://localhost:8001 # May be a docker instance
-
-# Optional
-
-REDIS_HOST:
-127.0.0.1
-REDIS_PORT:
-6379
-REDIS_EXPIRATION_TIME:
-43200 # in seconds
-REDIS_ASYNC_CACHE: # If True, the caching process will be done in async way
-True
-```
 
 ## Contribution
 
