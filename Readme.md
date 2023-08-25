@@ -5,7 +5,7 @@ This simple package is your right way! 🚀🚀
 
 `osm-hepler` is a pretty simple package for making the process of getting eta for a number of locations to be the easiest part in your project (just two lines of code).
 
-The package built on top of  [`OSRM` (Open Source Routing Machine) project](https://project-osrm.org/). :world_map:  
+The package built on top of  [`OSRM` (Open Source Routing Machine) project](https://project-osrm.org/). 🗺️
 We can assume it as a python wrapper on top of the `table` service api of the `OSRM` project.  
 
 ## Installation  
