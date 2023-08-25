@@ -1,3 +1,16 @@
+<p align="center">
+    <a href="#"><img src="https://github.com/mo-waseem/osm-helper/blob/main/osm_helper/docs/img/osrm_python.png" alt="OSRM Table service Python Wrapper" /></a><br/>
+</p>
+<h2 align="center">OSRM Table Service Python Wrapper</h2>
+<p align="center">
+  <a href="https://pypi.org/project/osm-helper/" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/PyPi-v0.0.5-limegreen">
+</a>
+  <a href="https://www.python.org" target="_blank"><img alt="Static Badge" src="https://img.shields.io/badge/python-%5E3.8-limegreen">
+</a>
+	<img alt="Static Badge" src="https://img.shields.io/badge/license-MIT-limegreen">
+
+</p>
+
 # OSM-HELPER: A fast way to get the ETA (Estimated Time of Arrival)  🗺️ 🚀
 Do you have multiple python projects for Delivery 🛵, Ride-hailing 🚗 or any logistics service, and each time you need to build the `get_eta` function from scratch ?
 
