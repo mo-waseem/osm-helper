@@ -8,13 +8,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-[project.urls]
-"Homepage" = "https://github.com/mo-waseem/osm-helper"
-"Bug Tracker" = "https://github.com/mo-waseem/osm-helper/issues"
-
 [tool.poetry]
 name = "osm_helper"
-version = "0.0.1"
+version = "0.0.2"
 license = "MIT"
 authors = [
   "Waseem Kntar <waseem.kntar@gmail.com>",
@@ -22,6 +18,10 @@ authors = [
 description = "A fast way to get the ETA for the logistics projects that depends heavily on it"
 readme = ["Readme.md"]
 packages = [{include = "osm_helper"}]
+
+[tool.poetry.urls]
+"Homepage" = "https://github.com/mo-waseem/osm-helper"
+"Bug Tracker" = "https://github.com/mo-waseem/osm-helper/issues"
 
 [tool.poetry.dependencies]
 python='>=3.8'
