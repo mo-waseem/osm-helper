@@ -29,29 +29,31 @@ pip install osm-helper
 After installing the lib you can test it by the following:  
 
 ```python
-from osm_helper.locations import generate_random_locations
 from osm_helper.osm_api import OSM
 
-# Generate 10 random locations
-locations = generate_random_locations(
-    ("30.222676136092296", "31.455316886214952"), number=10
-)
+def simple_example():
+    locations = [
+        ("25.22386255613285", "55.28397838209264"),
+        ("25.356481138224012", "55.404779909052124"),
+    ]
 
-# Create a pretty simple OSM instance
-osm_api = OSM()
+    # Create a pretty simple OSM instance
+    osm_api = OSM()
 
-# Get the times
-result = osm_api.osm_matrix(
-    locations,
-    [i for i in range(len(locations)//2)],
-    [i for i in range(len(locations)//2, len(locations))],
-)
+    # Get the times
+    result = osm_api.osm_matrix(
+        locations,
+        [0], # Source location index
+        [1], # Destination location index
+    )
 
-print(result) # Time matrix
+    return result
+
+print(simple_example())
 ```
-By running the code:
+By running the code (you will got the following result, the value may be changed with a small changes depending on the OSRM instance you are using):
 ```
-{'duration': [[251, 184, 575.3, 283.1, 472], [207.2, 264.5, 413.5, 121.3, 310.2], [192.5, 417, 439, 277.4, 363.2], [70.4, 271.9, 399.5, 177.8, 296.2], [192.2, 190.5, 486.8, 194.6, 383.5]]}
+{'duration': [[1128.8]]}
 ```
 
  ### Caching and Load balancing Example
