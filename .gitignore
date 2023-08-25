@@ -163,3 +163,4 @@ config.yaml
 osm_helper_config.yaml
 
 async_test.py
+.pypirc

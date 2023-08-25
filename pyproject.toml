@@ -1,16 +1,7 @@
 [build-system]
-requires = ["setuptools>=61.0","aiohttp==3.8.4","aiosignal==1.3.1","async-timeout==4.0.2","attrs==23.1.0","certifi==2023.5.7","charset-normalizer==3.1.0","frozenlist==1.3.3","idna==3.4","multidict==6.0.4","python-dotenv==1.0.0","PyYAML==6.0","redis==4.6.0","requests==2.31.0","urllib3==2.0.2","yarl==1.9.2"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
-name = "osm_helper"
-version = "0.0.1"
-authors = [
-  { name="Waseem Kntar", email="waseem.kntar@gmail.com" },
-]
-description = "A fast way to get the ETA for the logistics projects that depends heavily on it"
-readme = "README.md"
-requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -20,3 +11,26 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/mo-waseem/osm-helper"
 "Bug Tracker" = "https://github.com/mo-waseem/osm-helper/issues"
+
+[tool.poetry]
+name = "osm_helper"
+version = "0.0.1"
+license = "MIT"
+authors = [
+  "Waseem Kntar <waseem.kntar@gmail.com>",
+]
+description = "A fast way to get the ETA for the logistics projects that depends heavily on it"
+readme = ["Readme.md"]
+packages = [{include = "osm_helper"}]
+
+[tool.poetry.dependencies]
+python='>=3.8'
+requests = "2.31.0"
+redis = "4.6.0"
+python-dotenv = "1.0.0"
+pyyaml = "^6.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+coverage = "^7.3.0"
+

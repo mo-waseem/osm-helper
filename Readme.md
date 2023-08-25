@@ -10,10 +10,8 @@ We can assume it as a python wrapper on top of the `table` service api of the `O
 
 ## Installation  
 
-You can find the .whl file in the releases section:
-
 ```
-pip install osm_helper-0.0.1-py3-none-any.whl
+pip install osm-helper
 ```
 
 ## Features
