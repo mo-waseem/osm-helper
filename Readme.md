@@ -1,7 +1,7 @@
-# OSM-HELPER: A fast way to get the ETA (Estimated Time of Arrival)  :car::motorcycle::world_map::rocket:
-Do you have multiple python projects for Delivery :motorcycle:, Ride-hailing :car: or any logistics service, and each time you need to build the `get_eta` function from scratch ?
+# OSM-HELPER: A fast way to get the ETA (Estimated Time of Arrival)  🗺️ 🚀
+Do you have multiple python projects for Delivery 🛵, Ride-hailing 🚗 or any logistics service, and each time you need to build the `get_eta` function from scratch ?
 
-This simple package is your right way! :rocket::rocket:
+This simple package is your right way! 🚀🚀
 
 `osm-hepler` is a pretty simple package for making the process of getting eta for a number of locations to be the easiest part in your project (just two lines of code).
 
