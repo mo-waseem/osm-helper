@@ -25,9 +25,9 @@ packages = [{include = "osm_helper"}]
 
 [tool.poetry.dependencies]
 python='>=3.8'
-requests = "2.31.0"
-redis = "4.6.0"
-python-dotenv = "1.0.0"
+requests = ">=2.31.0"
+redis = ">=4.6.0"
+python-dotenv = ">=1.0.0"
 pyyaml = "^6.0.1"
 
 [tool.poetry.group.dev.dependencies]
