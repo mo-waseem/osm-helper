@@ -10,7 +10,7 @@ classifiers = [
 
 [tool.poetry]
 name = "osm_helper"
-version = "0.0.6"
+version = "0.0.8"
 license = "MIT"
 authors = [
   "Waseem Kntar <waseem.kntar@gmail.com>",
